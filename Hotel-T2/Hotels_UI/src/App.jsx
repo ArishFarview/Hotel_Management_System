@@ -1,6 +1,4 @@
-// App.jsx - Main entry component for the application
-// Imports React hooks and assets, as well as main modules
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -10,17 +8,28 @@ import HotelDetails from './modules/HotelDetails';
 
 // App component manages the main layout and renders micro frontends
 function App() {
-  // Example state (not currently used in UI)
-  const [count, setCount] = useState(0)
+  const [filterData,setfilterData] = useState({})
+
+  useEffect(() => {
+  const receiveMessage = (event) => {
+    if (event.origin !== "http://localhost:3000") { 
+      console.log("error");
+    } // security check
+    const hotelData = event.data;
+    console.log("Received hotel data:", hotelData);
+    setfilterData(hotelData)
+    // You can store in state, render results, etc.
+  };
+
+  window.addEventListener("message", receiveMessage);
+  return () => window.removeEventListener("message", receiveMessage);
+}, []);
 
   return (
     <div className="App">
-      {/* Micro Frontend: Search bar and hotel search form */}
-      <Search />
-      {/* Micro Frontend: Listing (currently commented out)
-      <Listing /> */}
-      {/* Micro Frontend: Hotel Details (shows hotel cards) */}
-      <HotelDetails />
+     {filterData &&(
+      <h2>data is coming to the filterdata state </h2>
+     )}
     </div>
   )
 }
