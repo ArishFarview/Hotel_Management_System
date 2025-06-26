@@ -1,5 +1,7 @@
+// Listing.jsx - Placeholder for the hotel listing micro frontend
 import React from 'react';
 
+// Listing component (to be implemented)
 const Listing = () => {
   return (
     <div>
