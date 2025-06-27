@@ -38,6 +38,19 @@ const HotelDetails = ({
   if (!hotels.length) {
     return <div className={styles.hotelListingsContent}>No hotels found.</div>;
   }
+const handleCart = (hotel) => {
+  const bookingData = {
+    name: hotel.name,
+    location: hotel.location,
+    pricePerDay: hotel.pricePerDay,
+    image: hotel.image,
+    rating: hotel.rating,
+  };
+
+  // Post message to other app (e.g., running on localhost:3000)
+  window.parent.postMessage(bookingData, "http://localhost:3000");
+};
+
 
   return (
     <div className={styles.hotelDetailsSection}>
@@ -150,7 +163,7 @@ const HotelDetails = ({
                   )}
                   <div className={styles.hotelCardTaxes}>+₹{taxes.toLocaleString()} taxes & fees<br />for 2 rooms per night</div>
                   <div className={styles.hotelCardLoginLink}>{loginText}</div>
-                  <button className={styles.hotelCardBookBtn}>Book Now</button>
+                  <button className={styles.hotelCardBookBtn} onClick={()=>handleCart(hotel)}>Book Now</button>
                 </div>
               </div>
             );
