@@ -1,25 +1,6 @@
 // HotelDetails.jsx - Displays hotel details cards
 import React from 'react';
-
-// MOCK_HOTELS is a placeholder for hotel data; replace with real data from backend in production
-const MOCK_HOTELS = [
-  {
-    id: 1,
-    name: 'Taj Santacruz, Mumbai',
-    location: 'Vile Parle | 3 minutes walk to T1 - Chhatrapati Shivaji International Airport',
-    rating: 4.4,
-    ratingsCount: 1296,
-    price: 28500,
-    taxes: 5130,
-    nights: 2,
-    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
-    features: ['Free Cancellation', 'Book @ ₹0 available', 'Breakfast available at extra charges', 'Get a Taj Gift Card worth at least INR 500 for F&B & Spa'],
-    tags: ['Spa', 'Swimming Pool'],
-    package: 'ELITE PACKAGE',
-    packageDesc: 'Enjoy exclusive benefits at a discounted price in an Elite Package deal',
-    loginText: 'Login now & save more',
-  },
-];
+import styles from './HotelDetails.module.css';
 
 // Helper function to format dates for display
 const defaultFormatDate = (date) => {
@@ -31,7 +12,16 @@ const defaultFormatDate = (date) => {
   return `${day} ${month} '${year}`;
 };
 
+/**
+ * HotelDetails component
+ * Props:
+ *   - hotels: array of hotel objects (required)
+ *   - loading: boolean (optional)
+ *   - location, checkIn, checkOut, guestInfo, formatDate: optional for future use
+ */
 const HotelDetails = ({
+  hotels = [],
+  loading = false,
   location = '',
   checkIn = new Date(),
   checkOut = new Date(),
@@ -41,79 +31,122 @@ const HotelDetails = ({
   // Use provided formatDate or fallback to default
   const safeFormatDate = typeof formatDate === 'function' ? formatDate : defaultFormatDate;
 
+  if (loading) {
+    return <div className={styles.hotelListingsContent}>Loading hotels...</div>;
+  }
+
+  if (!hotels.length) {
+    return <div className={styles.hotelListingsContent}>No hotels found.</div>;
+  }
+
   return (
-    <div className="hotel-listings-section">
-      {/* Sort bar for hotel listings */}
-      <div className="hotel-listings-sortbar">
-        <span>Sort By:</span>
-        <button className="sort-btn active">Most Popular</button>
-        <button className="sort-btn">Price - Low to High</button>
-        <button className="sort-btn">Price - High to Low</button>
-        <button className="sort-btn">Goibibo Reviews - Highest First</button>
-        <input className="hotel-listings-searchbar" placeholder="Search Location or Property Name" />
+    <div className={styles.hotelDetailsSection}>
+      <div className={styles.sortBar}>
+        <span style={{ fontWeight: 700, marginRight: 8 }}>Sort By:</span>
+        <button className={styles.sortBtn + ' ' + styles.active}>Most Popular</button>
+        <button className={styles.sortBtn}>Price - Low to High</button>
+        <button className={styles.sortBtn}>Price - High to Low</button>
+        <button className={styles.sortBtn}>Goibibo Reviews - Highest First</button>
+        <input
+          className={styles.searchBar}
+          placeholder="Search Location or Property Name"
+          style={{ marginLeft: 'auto' }}
+        />
       </div>
-      <div className="hotel-listings-main">
+      <div style={{ display: 'flex', gap: '2rem', marginTop: '1.2rem' }}>
         {/* Sidebar with filter options */}
-        <div className="hotel-listings-sidebar">
-          <div className="sidebar-title">Filters</div>
-          <div className="sidebar-filter"><input type="checkbox" /> goStays</div>
-          <div className="sidebar-filter"><input type="checkbox" /> Book @ ₹0</div>
-          <div className="sidebar-filter"><input type="checkbox" /> Flexible Check In</div>
-          <div className="sidebar-filter"><input type="checkbox" /> Daily Steal Deal</div>
-          <div className="sidebar-filter"><input type="checkbox" /> Early Bird Deal</div>
-          <div className="sidebar-filter"><input type="checkbox" /> Couple Friendly</div>
-          <div className="sidebar-filter"><input type="checkbox" /> Free Cancellation</div>
-          <div className="sidebar-filter"><input type="checkbox" /> Free Breakfast</div>
-          <div className="sidebar-filter"><input type="checkbox" /> Pay At Hotel</div>
-          <div className="sidebar-filter"><input type="checkbox" /> Flexible Check In (6AM to 6PM)</div>
+        <div className={styles.hotelListingsSidebar || 'hotel-listings-sidebar'}>
+          <div className={styles.sidebarTitle || 'sidebar-title'}>FILTERS <span style={{ float: 'right', color: '#1976d2', fontWeight: 500, cursor: 'pointer', fontSize: '0.95rem' }}>CLEAR</span></div>
+          <div style={{ fontWeight: 700, fontSize: '1rem', margin: '1rem 0 0.5rem 0' }}>▼ Previously Used Filters</div>
+          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> goStays</div>
+          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Book @ ₹0</div>
+          <div style={{ fontWeight: 700, fontSize: '1rem', margin: '1.2rem 0 0.5rem 0' }}>▼ Popular filters</div>
+          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> goStays <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(51)</span></div>
+          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Book @ ₹0 <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(1195)</span></div>
+          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Flexible Check In <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(22)</span></div>
+          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Daily Steal Deal <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(23)</span></div>
+          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Early Bird Deal <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(57)</span></div>
+          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Couple Friendly <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(830)</span></div>
+          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Free Cancellation <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(1201)</span></div>
+          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Free Breakfast <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(151)</span></div>
+          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Pay At Hotel <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(5)</span></div>
         </div>
         {/* Main content area for hotel cards */}
-        <div className="hotel-listings-content">
-          <div className="hotel-listings-title">Most Booked by Travellers like you</div>
-          {/* Render each hotel card */}
-          {MOCK_HOTELS.map(hotel => (
-            <div className="hotel-card" key={hotel.id}>
-              {/* Hotel image and thumbnails */}
-              <div className="hotel-card-img-col">
-                <img src={hotel.image} alt={hotel.name} className="hotel-card-img" />
-                <div className="hotel-card-thumbs">
-                  <img src={hotel.image} alt="thumb1" className="hotel-card-thumb" />
-                  <img src={hotel.image} alt="thumb2" className="hotel-card-thumb" />
-                  <img src={hotel.image} alt="thumb3" className="hotel-card-thumb" />
-                  <button className="hotel-card-thumb-viewall">VIEW ALL</button>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div className={styles.hotelListingsTitle}>Most Booked by Travellers like you</div>
+          {hotels.map(hotel => {
+            const name = hotel.name || 'Taj Santacruz, Mumbai';
+            const location = hotel.location || 'Vile Parle | 3 minutes walk to T1 - Chhatrapati Shivaji International Airport';
+            const locationUrl = hotel.locationUrl || '#';
+            const rating = hotel.rating;
+            const ratingsCount = hotel.ratingsCount !== undefined ? hotel.ratingsCount : 1298;
+            const pricePerDay = hotel.pricePerDay;
+            const taxes = hotel.taxes !== undefined ? hotel.taxes : 5100;
+            const image = hotel.image || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80';
+            const thumbnails = hotel.thumbnails || [
+              image,
+              'https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=400&q=80',
+              'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
+              'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+            ];
+            const tags = hotel.tags || ['Spa', 'Swimming Pool'];
+            const features = hotel.features || [
+              'Free Cancellation',
+              'Book @ ₹0 available',
+              'Breakfast available at extra charges',
+              'Get a Taj Gift Card worth at least INR 500 for F&B & Spa',
+            ];
+            const packageName = hotel.package || 'ELITE PACKAGE';
+            const packageDesc = hotel.packageDesc || 'Enjoy exclusive benefits at a discounted price in an Elite Package deal';
+            const loginText = hotel.loginText || 'Login now & save more';
+            return (
+              <div className={styles.hotelCard} key={hotel.id || name}>
+                <div className={styles.hotelCardImgCol}>
+                  <img src={image} alt={name} className={styles.hotelCardImg} />
+                  <div className={styles.hotelCardThumbs}>
+                    {thumbnails.slice(0, 3).map((thumb, idx) => (
+                      <img src={thumb} alt={`thumb${idx+1}`} className={styles.hotelCardThumb} key={idx} />
+                    ))}
+                    <button className={styles.hotelCardThumbViewAll}>VIEW ALL</button>
+                  </div>
+                </div>
+                <div className={styles.hotelCardMainCol}>
+                  <div className={styles.hotelCardHeader}>
+                    <span className={styles.hotelCardStar}>5★ · Hotel</span>
+                    <span className={styles.hotelCardRatings}>{ratingsCount} Ratings</span>
+                    {rating !== undefined && (
+                      <span className={styles.hotelCardRatingBadge}>{rating}/5</span>
+                    )}
+                  </div>
+                  <div className={styles.hotelCardTitle}>{name}</div>
+                  <div className={styles.hotelCardLocation}>
+                    <a href={locationUrl}>{location}</a>
+                  </div>
+                  <div className={styles.hotelCardTags}>
+                    {tags.map(tag => <span className={styles.hotelCardTag} key={tag}>{tag}</span>)}
+                    <span className={styles.hotelCardTagMore}>& more</span>
+                  </div>
+                  <ul className={styles.hotelCardFeatures}>
+                    {features.map((f, i) => (
+                      <li key={f}>{f}</li>
+                    ))}
+                  </ul>
+                  <div className={styles.hotelCardPackage}>
+                    <span className={styles.hotelCardPackageBadge}>{packageName}</span>
+                    <span className={styles.hotelCardPackageDesc}>{packageDesc}</span>
+                  </div>
+                </div>
+                <div className={styles.hotelCardPriceCol}>
+                  {pricePerDay !== undefined && (
+                    <div className={styles.hotelCardPrice}>₹{pricePerDay.toLocaleString()}</div>
+                  )}
+                  <div className={styles.hotelCardTaxes}>+₹{taxes.toLocaleString()} taxes & fees<br />for 2 rooms per night</div>
+                  <div className={styles.hotelCardLoginLink}>{loginText}</div>
+                  <button className={styles.hotelCardBookBtn}>Book Now</button>
                 </div>
               </div>
-              {/* Main hotel details */}
-              <div className="hotel-card-main-col">
-                <div className="hotel-card-header">
-                  <span className="hotel-card-star">5★ · Hotel</span>
-                  <span className="hotel-card-ratings">{hotel.ratingsCount} Ratings</span>
-                  <span className="hotel-card-rating-badge">{hotel.rating}/5</span>
-                </div>
-                <div className="hotel-card-title">{hotel.name}</div>
-                <div className="hotel-card-location">{hotel.location}</div>
-                {/* Hotel tags (e.g., Spa, Swimming Pool) */}
-                <div className="hotel-card-tags">
-                  {hotel.tags.map(tag => <span className="hotel-card-tag" key={tag}>{tag}</span>)}
-                </div>
-                {/* List of hotel features */}
-                <ul className="hotel-card-features">
-                  {hotel.features.map(f => <li key={f}>{f}</li>)}
-                </ul>
-                {/* Package information */}
-                <div className="hotel-card-package">
-                  <span className="hotel-card-package-badge">{hotel.package}</span>
-                  <span className="hotel-card-package-desc">{hotel.packageDesc}</span>
-                </div>
-              </div>
-              {/* Price and login link */}
-              <div className="hotel-card-price-col">
-                <div className="hotel-card-price">₹{hotel.price.toLocaleString()}</div>
-                <div className="hotel-card-taxes">+₹{hotel.taxes.toLocaleString()} taxes & fees<br />for 2 rooms per night</div>
-                <div className="hotel-card-login-link">{hotel.loginText}</div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

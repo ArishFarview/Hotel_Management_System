@@ -6,7 +6,8 @@ import './styles.css';
 const POPULAR_CITIES = [
   'Delhi',
   'Mumbai',
-  'Bengaluru',
+  'Bangaluru',
+  'Hyderabad',
 ];
 
 const LocationIcon = () => (
@@ -32,28 +33,18 @@ const Search = () => {
 
   const handleSearch = async () => {
     try {
-      const res = await fetch(`http://localhost:8081/api/hotels/search?location=${location}`);
-      const data = await res.json();
-      setHotels(data);         // Store for local use
-      setShowIframe(true);     // Show iframe
-
       // Wait a tick to let iframe render before posting message
+      console.log("Sending location to iframe:", location); //Log the data being sent
       setTimeout(() => {
         if (iframeRef.current?.contentWindow) {
-          iframeRef.current.contentWindow.postMessage(data, "http://localhost:3001");
+          iframeRef.current.contentWindow.postMessage(location, "http://localhost:3001");
         }
       }, 500); // 500ms delay to ensure iframe loads
+      setShowIframe(true);
     } catch (error) {
       console.error("Failed to fetch hotels:", error);
     }
-  };
-
-
-
-
-
-
-
+  }
 
   const formatDate = (date) => {
     const day = date.getDate();
@@ -72,8 +63,6 @@ const Search = () => {
       [type]: operation === 'add' ? prev[type] + 1 : Math.max(1, prev[type] - 1)
     }));
   };
-
-
 
   // Handle click outside to close popular dropdown
   React.useEffect(() => {
@@ -253,7 +242,6 @@ const Search = () => {
           style={{ border: '1px solid #ccc', marginTop: '20px' }}
           title="Hotel Module"
         />
-
       )}
     </div>
   );

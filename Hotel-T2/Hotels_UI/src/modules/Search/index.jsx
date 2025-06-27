@@ -9,7 +9,8 @@ import HotelDetails from '../HotelDetails';
 const POPULAR_CITIES = [
   'Delhi',
   'Mumbai',
-  'Bengaluru',
+  'Bangaluru',
+  'Hyderabad'
 ];
 
 // SVG icon for location
@@ -39,6 +40,8 @@ const Search = () => {
   const guestDropdownRef = useRef(null);
   // State to toggle between search form and results
   const [isSearchMode, setIsSearchMode] = useState(false);
+  const [hotels, setHotels] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   // Helper to format date for display
   const formatDate = (date) => {
@@ -62,9 +65,37 @@ const Search = () => {
   };
 
   // Handler for search button click
-  const handleSearch = () => {
+  const handleSearch = async () => {
+    console.log("Starting search...");
+    console.log("📍 Location entered:", location);
+  
+    setLoading(true);
     setIsSearchMode(true);
+  
+    try {
+      const url = `http://localhost:8081/api/hotels/search?location=${encodeURIComponent(location)}`;
+      console.log("🌐 Fetching from URL:", url);
+  
+      const res = await fetch(url);
+  
+      if (!res.ok) {
+        console.error("❌ Failed to fetch data. Status:", res.status);
+        throw new Error('Failed to fetch');
+      }
+  
+      const data = await res.json();
+      console.log("Hotel data received from backend:", data);
+  
+      setHotels(data);
+    } catch (e) {
+      console.error("Error while fetching hotel data:", e);
+      setHotels([]);
+    }
+  
+    setLoading(false);
+    console.log("Search complete.");
   };
+  
 
   // Effect: Close popular dropdown when clicking outside
   React.useEffect(() => {
@@ -112,175 +143,183 @@ const Search = () => {
   // Render search form or hotel details based on isSearchMode
   return (
     <>
-      {/* Search form UI */}
-      {!isSearchMode ? (
-        <div className="search-container">
+      <div className="search-section-container">
+        {/* Title section */}
+        <div className="search-title-container">
           <h1 className="search-title">Book Hotels and Homestays</h1>
-          <div className="search-form">
-            {/* Location input with popular dropdown */}
-            <fieldset className="search-input-group location-group">
-              <legend>Where to</legend>
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="e.g. - Area, Landmark or Property Name"
-                className="location-input"
-                onFocus={() => setShowPopular(true)}
-                ref={locationInputRef}
-                autoComplete="off"
-              />
-              {/* Popular cities dropdown */}
-              {showPopular && (
-                <div className="popular-dropdown" ref={popularRef}>
-                  <div className="popular-title">Popular Searches</div>
-                  <ul className="popular-list">
-                    {POPULAR_CITIES.map((city) => (
-                      <li
-                        key={city}
-                        className="popular-item"
-                        onClick={() => {
-                          setLocation(city);
-                          setShowPopular(false);
-                          if (locationInputRef.current) locationInputRef.current.blur();
-                        }}
-                      >
-                        <LocationIcon />
-                        {city}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </fieldset>
-            {/* Check-in date picker */}
-            <fieldset className="search-input-group">
-              <legend>Check-in</legend>
-              <DatePicker
-                selected={checkIn}
-                onChange={date => setCheckIn(date)}
-                minDate={(() => { const d = new Date(); d.setHours(0,0,0,0); return d; })()}
-                className="date-input"
-                dateFormat="dd MMM 'yy"
-                customInput={
-                  <div className="custom-date-input">
-                    <div className="date-value">{formatDate(checkIn)}</div>
-                    <div className="day">{getDayName(checkIn)}</div>
-                  </div>
-                }
-              />
-            </fieldset>
-            {/* Check-out date picker */}
-            <fieldset className="search-input-group">
-              <legend>Check-out</legend>
-              <DatePicker
-                selected={checkOut}
-                onChange={date => setCheckOut(date)}
-                minDate={(() => { const d = new Date(checkIn); d.setDate(d.getDate() + 1); return d; })()}
-                className="date-input"
-                dateFormat="dd MMM 'yy"
-                customInput={
-                  <div className="custom-date-input">
-                    <div className="date-value">{formatDate(checkOut)}</div>
-                    <div className="day">{getDayName(checkOut)}</div>
-                  </div>
-                }
-              />
-            </fieldset>
-            {/* Guests & Rooms selector */}
-            <fieldset className="search-input-group">
-              <legend>Guests & Rooms</legend>
-              <div 
-                className="guest-input"
-                onClick={() => setIsGuestDropdownOpen(!isGuestDropdownOpen)}
-              >
-                <span>{guestInfo.adults} Adults | {guestInfo.rooms} Room{guestInfo.rooms > 1 ? 's' : ''}{guestInfo.children > 0 ? ` | ${guestInfo.children} Child${guestInfo.children > 1 ? 'ren' : ''}` : ''}</span>
-              </div>
-              {/* Guest dropdown for selecting rooms, adults, children */}
-              {isGuestDropdownOpen && (
-                <div className="guest-dropdown guest-dropdown-large" ref={guestDropdownRef}>
-                  <div className="guest-row">
-                    <div className="guest-col">
-                      <div className="guest-label">Rooms <span className="guest-label-sub">(Max 8)</span></div>
-                      <div className="guest-controls">
-                        <button onClick={() => setGuestInfo(g => ({ ...g, rooms: Math.max(1, g.rooms - 1) }))}>-</button>
-                        <span>{guestInfo.rooms}</span>
-                        <button onClick={() => setGuestInfo(g => ({ ...g, rooms: Math.min(8, g.rooms + 1) }))}>+</button>
-                      </div>
-                    </div>
-                    <div className="guest-col">
-                      <div className="guest-label">Adults <span className="guest-label-sub">(17+ yr)</span></div>
-                      <div className="guest-controls">
-                        <button onClick={() => setGuestInfo(g => ({ ...g, adults: Math.max(1, g.adults - 1) }))}>-</button>
-                        <span>{guestInfo.adults}</span>
-                        <button onClick={() => setGuestInfo(g => ({ ...g, adults: g.adults + 1 }))}>+</button>
-                      </div>
-                    </div>
-                    <div className="guest-col">
-                      <div className="guest-label">Children <span className="guest-label-sub">(0-17 yr)</span></div>
-                      <div className="guest-controls">
-                        <button onClick={() => setGuestInfo(g => ({ ...g, children: Math.max(0, g.children - 1) }))}>-</button>
-                        <span>{guestInfo.children}</span>
-                        <button onClick={() => setGuestInfo(g => ({ ...g, children: g.children + 1 }))}>+</button>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Info box for children options */}
-                  <div className="guest-info-box">
-                    <div className="guest-info-left">
-                      <div className="guest-info-title">Travelling with children?</div>
-                      <div className="guest-info-desc">If you are travelling with children, add number of children and their age to get the best rooms options, prices etc.</div>
-                    </div>
-                    <div className="guest-info-right">
-                      <div className="guest-info-feature"><span className="guest-info-icon">🛏️</span> Extra Mattress</div>
-                      <div className="guest-info-feature"><span className="guest-info-icon">🥞</span> Kid Breakfast Inclusive plans</div>
-                    </div>
-                  </div>
-                  <div className="guest-done-row">
-                    <button className="guest-done-btn" onClick={() => setIsGuestDropdownOpen(false)}>DONE</button>
-                  </div>
-                </div>
-              )}
-            </fieldset>
-            {/* Search button */}
-            <button className="search-button" onClick={handleSearch}>
-              SEARCH
-            </button>
-          </div>
         </div>
-      ) : (
-        <>
-          {/* Hotel listings bar with search summary */}
-          <div className="hotel-listings-bar">
-            <div className="hotel-listings-bar-fields">
-              <div className="hotel-listings-bar-field">
-                <label>AREA, LANDMARK OR PROPERTY NAME</label>
-                <input value={location} readOnly />
-              </div>
-              <div className="hotel-listings-bar-field">
-                <label>CHECKIN</label>
-                <input value={formatDate(checkIn)} readOnly style={{fontWeight:700}} />
-              </div>
-              <div className="hotel-listings-bar-field">
-                <label>CHECKOUT</label>
-                <input value={formatDate(checkOut)} readOnly style={{fontWeight:700}} />
-              </div>
-              <div className="hotel-listings-bar-field">
-                <label>GUEST & ROOMS</label>
-                <input value={`${guestInfo.adults} Adults . ${guestInfo.children} Children . ${guestInfo.rooms} Room`} readOnly style={{fontWeight:700}} />
+        {/* Search form section */}
+        <div className="search-form-container">
+          {!isSearchMode ? (
+            <div className="search-form">
+              {/* Location input with popular dropdown */}
+              <fieldset className="search-input-group location-group">
+                <legend>Where to</legend>
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="e.g. - Area, Landmark or Property Name"
+                  className="location-input"
+                  onFocus={() => setShowPopular(true)}
+                  ref={locationInputRef}
+                  autoComplete="off"
+                />
+                {/* Popular cities dropdown */}
+                {showPopular && (
+                  <div className="popular-dropdown" ref={popularRef}>
+                    <div className="popular-title">Popular Searches</div>
+                    <ul className="popular-list">
+                      {POPULAR_CITIES.map((city) => (
+                        <li
+                          key={city}
+                          className="popular-item"
+                          onClick={() => {
+                            setLocation(city);
+                            setShowPopular(false);
+                            if (locationInputRef.current) locationInputRef.current.blur();
+                          }}
+                        >
+                          <LocationIcon />
+                          {city}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </fieldset>
+              {/* Check-in date picker */}
+              <fieldset className="search-input-group">
+                <legend>Check-in</legend>
+                <DatePicker
+                  selected={checkIn}
+                  onChange={date => setCheckIn(date)}
+                  minDate={(() => { const d = new Date(); d.setHours(0,0,0,0); return d; })()}
+                  className="date-input"
+                  dateFormat="dd MMM 'yy"
+                  customInput={
+                    <div className="custom-date-input">
+                      <div className="date-value">{formatDate(checkIn)}</div>
+                      <div className="day">{getDayName(checkIn)}</div>
+                    </div>
+                  }
+                />
+              </fieldset>
+              {/* Check-out date picker */}
+              <fieldset className="search-input-group">
+                <legend>Check-out</legend>
+                <DatePicker
+                  selected={checkOut}
+                  onChange={date => setCheckOut(date)}
+                  minDate={(() => { const d = new Date(checkIn); d.setDate(d.getDate() + 1); return d; })()}
+                  className="date-input"
+                  dateFormat="dd MMM 'yy"
+                  customInput={
+                    <div className="custom-date-input">
+                      <div className="date-value">{formatDate(checkOut)}</div>
+                      <div className="day">{getDayName(checkOut)}</div>
+                    </div>
+                  }
+                />
+              </fieldset>
+              {/* Guests & Rooms selector */}
+              <fieldset className="search-input-group">
+                <legend>Guests & Rooms</legend>
+                <div 
+                  className="guest-input"
+                  onClick={() => setIsGuestDropdownOpen(!isGuestDropdownOpen)}
+                >
+                  <span>{guestInfo.adults} Adults | {guestInfo.rooms} Room{guestInfo.rooms > 1 ? 's' : ''}{guestInfo.children > 0 ? ` | ${guestInfo.children} Child${guestInfo.children > 1 ? 'ren' : ''}` : ''}</span>
+                </div>
+                {/* Guest dropdown for selecting rooms, adults, children */}
+                {isGuestDropdownOpen && (
+                  <div className="guest-dropdown guest-dropdown-large" ref={guestDropdownRef}>
+                    <div className="guest-row">
+                      <div className="guest-col">
+                        <div className="guest-label">Rooms <span className="guest-label-sub">(Max 8)</span></div>
+                        <div className="guest-controls">
+                          <button onClick={() => setGuestInfo(g => ({ ...g, rooms: Math.max(1, g.rooms - 1) }))}>-</button>
+                          <span>{guestInfo.rooms}</span>
+                          <button onClick={() => setGuestInfo(g => ({ ...g, rooms: Math.min(8, g.rooms + 1) }))}>+</button>
+                        </div>
+                      </div>
+                      <div className="guest-col">
+                        <div className="guest-label">Adults <span className="guest-label-sub">(17+ yr)</span></div>
+                        <div className="guest-controls">
+                          <button onClick={() => setGuestInfo(g => ({ ...g, adults: Math.max(1, g.adults - 1) }))}>-</button>
+                          <span>{guestInfo.adults}</span>
+                          <button onClick={() => setGuestInfo(g => ({ ...g, adults: g.adults + 1 }))}>+</button>
+                        </div>
+                      </div>
+                      <div className="guest-col">
+                        <div className="guest-label">Children <span className="guest-label-sub">(0-17 yr)</span></div>
+                        <div className="guest-controls">
+                          <button onClick={() => setGuestInfo(g => ({ ...g, children: Math.max(0, g.children - 1) }))}>-</button>
+                          <span>{guestInfo.children}</span>
+                          <button onClick={() => setGuestInfo(g => ({ ...g, children: g.children + 1 }))}>+</button>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Info box for children options */}
+                    <div className="guest-info-box">
+                      <div className="guest-info-left">
+                        <div className="guest-info-title">Travelling with children?</div>
+                        <div className="guest-info-desc">If you are travelling with children, add number of children and their age to get the best rooms options, prices etc.</div>
+                      </div>
+                      <div className="guest-info-right">
+                        <div className="guest-info-feature"><span className="guest-info-icon">🛏️</span> Extra Mattress</div>
+                        <div className="guest-info-feature"><span className="guest-info-icon">🥞</span> Kid Breakfast Inclusive plans</div>
+                      </div>
+                    </div>
+                    <div className="guest-done-row">
+                      <button className="guest-done-btn" onClick={() => setIsGuestDropdownOpen(false)}>DONE</button>
+                    </div>
+                  </div>
+                )}
+              </fieldset>
+              {/* Search button centered in a flex wrapper */}
+              <div className="search-button-wrapper">
+                <button className="search-button" onClick={handleSearch}>
+                  SEARCH
+                </button>
               </div>
             </div>
-            <button className="update-search-btn">Update Search</button>
-          </div>
-          {/* Render hotel details for the search result */}
-          <HotelDetails
-            location={location}
-            checkIn={checkIn}
-            checkOut={checkOut}
-            guestInfo={guestInfo}
-            formatDate={formatDate}
-          />
-        </>
+          ) : (
+            <div className="hotel-listings-bar">
+              <div className="hotel-listings-bar-fields">
+                <div className="hotel-listings-bar-field">
+                  <label>AREA, LANDMARK OR PROPERTY NAME</label>
+                  <input value={location} readOnly />
+                </div>
+                <div className="hotel-listings-bar-field">
+                  <label>CHECKIN</label>
+                  <input value={formatDate(checkIn)} readOnly style={{fontWeight:700}} />
+                </div>
+                <div className="hotel-listings-bar-field">
+                  <label>CHECKOUT</label>
+                  <input value={formatDate(checkOut)} readOnly style={{fontWeight:700}} />
+                </div>
+                <div className="hotel-listings-bar-field">
+                  <label>GUEST & ROOMS</label>
+                  <input value={`${guestInfo.adults} Adults . ${guestInfo.children} Children . ${guestInfo.rooms} Room`} readOnly style={{fontWeight:700}} />
+                </div>
+              </div>
+              <button className="update-search-btn">Update Search</button>
+            </div>
+          )}
+        </div>
+      </div>
+      {/* Render hotel details OUTSIDE the search container */}
+      {isSearchMode && (
+        <HotelDetails
+          hotels={hotels}
+          loading={loading}
+          location={location}
+          checkIn={checkIn}
+          checkOut={checkOut}
+          guestInfo={guestInfo}
+          formatDate={formatDate}
+        />
       )}
     </>
   );
