@@ -11,6 +11,7 @@
   border-bottom-left-radius: 36px;
   border-bottom-right-radius: 36px;
   overflow: visible;
+  margin-bottom: 0;
 }
 
 .search-title {
@@ -555,4 +556,88 @@
     border-top: 2px solid #b2e0f7;
     margin-top: 0.7rem;
   }
+}
+
+.search-summary-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(90deg, #ff7e2d 0%, #e87c1a 100%);
+  border-radius: 14px;
+  padding: 1.1rem 1.5rem;
+  margin-bottom: 0;
+  margin-top: 0;
+  box-shadow: 0 2px 12px 0 rgba(31, 56, 88, 0.10);
+  gap: 1.5rem;
+}
+.summary-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1 1 0;
+  min-width: 180px;
+  max-width: 220px;
+  margin-right: 0;
+}
+.summary-label {
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.summary-value {
+  background: #fff;
+  color: #222;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 9px;
+  padding: 0.5rem 1.2rem;
+  width: 100%;
+  min-width: 0;
+  box-shadow: 0 1px 4px 0 rgba(31, 56, 88, 0.08);
+  text-align: center;
+}
+.update-search-btn {
+  background: #fff;
+  color: #1976d2;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 10px;
+  padding: 0.7rem 2.2rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  box-shadow: 0 2px 8px 0 rgba(31, 56, 88, 0.08);
+  min-width: 160px;
+  max-width: 200px;
+  margin-left: 1.5rem;
+}
+.update-search-btn:hover {
+  background: #1976d2;
+  color: #fff;
+}
+@media (max-width: 900px) {
+  .search-summary-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.7rem;
+    padding: 1rem 0.7rem;
+  }
+  .summary-field {
+    margin-right: 0;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .update-search-btn {
+    width: 100%;
+    margin-top: 0.7rem;
+    margin-left: 0;
+  }
+}
+
+/* Optionally, if you want to keep the orange background for the form but not for the summary bar, you can do: */
+.search-container.summary-only {
+  background: #fff !important;
 }  

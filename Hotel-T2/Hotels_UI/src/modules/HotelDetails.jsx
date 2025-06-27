@@ -53,23 +53,31 @@ const HotelDetails = ({
           style={{ marginLeft: 'auto' }}
         />
       </div>
-      <div style={{ display: 'flex', gap: '2rem', marginTop: '1.2rem' }}>
+      <div style={{ display: 'flex', gap: '2rem' }}>
         {/* Sidebar with filter options */}
-        <div className={styles.hotelListingsSidebar || 'hotel-listings-sidebar'}>
-          <div className={styles.sidebarTitle || 'sidebar-title'}>FILTERS <span style={{ float: 'right', color: '#1976d2', fontWeight: 500, cursor: 'pointer', fontSize: '0.95rem' }}>CLEAR</span></div>
-          <div style={{ fontWeight: 700, fontSize: '1rem', margin: '1rem 0 0.5rem 0' }}>▼ Previously Used Filters</div>
-          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> goStays</div>
-          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Book @ ₹0</div>
-          <div style={{ fontWeight: 700, fontSize: '1rem', margin: '1.2rem 0 0.5rem 0' }}>▼ Popular filters</div>
-          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> goStays <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(51)</span></div>
-          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Book @ ₹0 <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(1195)</span></div>
-          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Flexible Check In <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(22)</span></div>
-          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Daily Steal Deal <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(23)</span></div>
-          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Early Bird Deal <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(57)</span></div>
-          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Couple Friendly <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(830)</span></div>
-          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Free Cancellation <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(1201)</span></div>
-          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Free Breakfast <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(151)</span></div>
-          <div className={styles.sidebarFilter || 'sidebar-filter'}><input type="checkbox" /> Pay At Hotel <span style={{ color: '#888', fontWeight: 400, fontSize: '0.95rem' }}>(5)</span></div>
+        <div className={styles.hotelListingsSidebar}>
+          <div className={styles.sidebarTitle}>
+            FILTERS
+            <span style={{ color: '#1976d2', fontWeight: 500, cursor: 'pointer', fontSize: '0.95rem' }}>CLEAR</span>
+          </div>
+          <hr className={styles.divider} />
+          <div className={styles.filterGroup}>
+            <div className={styles.filterGroupHeader}>▼ Previously Used Filters</div>
+            <div className={styles.filterCheckbox}><input type="checkbox" /> goStays</div>
+            <div className={styles.filterCheckbox}><input type="checkbox" /> Book @ ₹0</div>
+          </div>
+          <div className={styles.filterGroup}>
+            <div className={styles.filterGroupHeader}>▼ Popular filters</div>
+            <div className={styles.filterCheckbox}><input type="checkbox" /> goStays <span className={styles.filterCount}>(51)</span></div>
+            <div className={styles.filterCheckbox}><input type="checkbox" /> Book @ ₹0 <span className={styles.filterCount}>(1195)</span></div>
+            <div className={styles.filterCheckbox}><input type="checkbox" /> Flexible Check In <span className={styles.filterCount}>(22)</span></div>
+            <div className={styles.filterCheckbox}><input type="checkbox" /> Daily Steal Deal <span className={styles.filterCount}>(23)</span></div>
+            <div className={styles.filterCheckbox}><input type="checkbox" /> Early Bird Deal <span className={styles.filterCount}>(57)</span></div>
+            <div className={styles.filterCheckbox}><input type="checkbox" /> Couple Friendly <span className={styles.filterCount}>(830)</span></div>
+            <div className={styles.filterCheckbox}><input type="checkbox" /> Free Cancellation <span className={styles.filterCount}>(1201)</span></div>
+            <div className={styles.filterCheckbox}><input type="checkbox" /> Free Breakfast <span className={styles.filterCount}>(151)</span></div>
+            <div className={styles.filterCheckbox}><input type="checkbox" /> Pay At Hotel <span className={styles.filterCount}>(5)</span></div>
+          </div>
         </div>
         {/* Main content area for hotel cards */}
         <div style={{ flex: 1, minWidth: 0 }}>
