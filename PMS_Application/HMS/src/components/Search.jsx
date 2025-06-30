@@ -6,7 +6,7 @@ import './styles.css';
 const POPULAR_CITIES = [
   'Delhi',
   'Mumbai',
-  'Bangaluru',
+  'Bangalore',
   'Hyderabad',
 ];
 
