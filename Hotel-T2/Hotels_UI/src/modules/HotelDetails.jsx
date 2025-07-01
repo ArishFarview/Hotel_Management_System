@@ -47,8 +47,8 @@ const handleCart = (hotel) => {
     rating: hotel.rating,
   };
 
-  // Post message to other app (e.g., running on localhost:3000)
-  window.parent.postMessage(bookingData, "http://localhost:3000");
+  // Post message to other app (e.g., running on 13.127.177.129:3000)
+  window.parent.postMessage(bookingData, "http://13.127.177.129:3000");
 };
 
 
