@@ -36,7 +36,7 @@ const Search = () => {
     try {
       setTimeout(() => {
         if (iframeRef.current?.contentWindow) {
-          iframeRef.current.contentWindow.postMessage(location, "http://13.127.177.129:3001");
+          iframeRef.current.contentWindow.postMessage(location, "http://13.127.177.129");
         }
       }, 500);
       setShowIframe(true);
