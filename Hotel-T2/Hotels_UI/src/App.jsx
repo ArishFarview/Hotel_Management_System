@@ -20,7 +20,7 @@ function App() {
       console.log("Received location from parent:", location);
   
       try {
-        const res = await fetch(`http://13.127.177.129:8081/api/hotels/search?location=${location}`);
+        const res = await fetch(`http://13.127.177.129:8080/api/hotels/search?location=${location}`);
         const data = await res.json();
   
         console.log("Hotel data fetched from backend:", data); 

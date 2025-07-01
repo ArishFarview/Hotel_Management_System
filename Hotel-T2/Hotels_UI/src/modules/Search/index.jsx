@@ -73,7 +73,7 @@ const Search = () => {
     setIsSearchMode(true);
   
     try {
-      const url = `http://13.127.177.129:8081/api/hotels/search?location=${encodeURIComponent(location)}`;
+      const url = `http://13.127.177.129:8080/api/hotels/search?location=${encodeURIComponent(location)}`;
       console.log("🌐 Fetching from URL:", url);
   
       const res = await fetch(url);
